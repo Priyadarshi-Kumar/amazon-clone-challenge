@@ -4,9 +4,15 @@ import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { useStateValue } from "./StateProvider";
+import { auth } from "./Firebase";
 
 function Header() {
-    const[{basket}] = useStateValue();
+    const [{ basket, user }] = useStateValue();
+    const handleAuthentication = () => {
+        if(user) {
+            auth.signOut();
+        } 
+    }
     return (
         <div className="header">
             <Link to="/">
@@ -26,17 +32,24 @@ function Header() {
                 <SearchIcon className="header__searchIcon" />
             </div>
             <div className="header__nav">
-                <div className="header__option">
-                    <span className="header__optionLineOne">Hello guest</span>
-                    <span className="header__optionLineTwo">Sign In</span>
-                </div>
+                <Link to={!user && "/login"}>
+                    {" "}
+                    <div className="header__option" onClick={handleAuthentication}>
+                        <span className="header__optionLineOne">
+                            {user?.email?? 'Hello guest'}
+                        </span>
+                        <span className="header__optionLineTwo">
+                            {user ? "Sign Out" : "Sign In"}
+                        </span>
+                    </div>
+                </Link>
                 <div className="header__option">
                     <span className="header__optionLineOne">Return</span>
                     <span className="header__optionLineTwo">& Orders</span>
                 </div>
                 <div className="header__option">
-                    <span className="header__optionLineOne">Hello guest</span>
-                    <span className="header__optionLineTwo">Sign In</span>
+                    <span className="header__optionLineOne">Your</span>
+                    <span className="header__optionLineTwo">Cart</span>
                 </div>
 
                 <Link to="/checkout">
